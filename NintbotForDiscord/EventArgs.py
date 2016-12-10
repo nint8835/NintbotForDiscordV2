@@ -232,5 +232,27 @@ class ReactionRemovedEventArgs(ReactionEditedEventArgs):
 class ReactionsClearedEventArgs(EventArgs):
 
     def __init__(self, message: discord.Message, reactions: List[discord.Reaction]):
-        self.message = message
-        self.reactions = reactions
+        self.message = message  # type: discord.Message
+        self.reactions = reactions  # type: List[discord.Reaction]
+
+
+class GroupMembershipStatusChangedEventArgs(EventArgs):
+
+    def __init__(self, channel: discord.PrivateChannel, user: discord.User):
+        self.channel = channel  # type: discord.PrivateChannel
+        self.user = user  # type: discord.User
+
+
+class MemberJoinedGroupEventArgs(GroupMembershipStatusChangedEventArgs):
+    pass
+
+
+class MemberRemovedFromGroupEventArgs(GroupMembershipStatusChangedEventArgs):
+    pass
+
+
+class ServerEmojisUpdatedEventArgs(EventArgs):
+
+    def __init__(self, before: List[discord.Emoji], after: List[discord.Emoji]):
+        self.before = before  # type: List[discord.Emoji]
+        self.after = after  # type: List[discord.Emoji]

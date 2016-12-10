@@ -2,7 +2,7 @@ from typing import Tuple
 import aioredis
 from discord import Server, Channel, User
 
-from NintbotForDiscord.BasePlugin import BasePlugin
+from .BasePlugin import BasePlugin
 from . import Bot
 from .Enums import RedisStorageScope
 

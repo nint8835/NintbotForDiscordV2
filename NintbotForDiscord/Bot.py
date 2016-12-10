@@ -1,19 +1,12 @@
-import datetime
 import logging
 from typing import Tuple
-import discord
 
-from .Redis import RedisManager
 from .CommandManager import CommandManager
-from .PluginManager import PluginManager
 from .Enums import EventType
-from .EventArgs import MessageReceivedEventArgs, PrivateMessageReceivedEventArgs, ServerMessageReceivedEventArgs, \
-    MessageDeletedEventArgs, MessageEditedEventArgs, ChannelDeletedEventArgs, ChannelCreatedEventArgs, \
-    ChannelUpdatedEventArgs, MemberJoinedEventArgs, MemberRemovedEventArgs, MemberUpdatedEventArgs, \
-    MemberBannedEventArgs, MemberUnbannedEventArgs, MemberTypingEventArgs, ServerJoinedEventArgs, \
-    ServerUnavailableEventArgs, ServerAvailableEventArgs, ServerRemovedEventArgs, ServerUpdatedEventArgs, \
-    RoleCreatedEventArgs, RoleDeletedEventArgs, VoiceStateUpdatedEventArgs, RoleUpdatedEventArgs
+from .EventArgs import *
 from .EventManager import EventManager
+from .PluginManager import PluginManager
+from .Redis import RedisManager
 
 
 class Bot(discord.Client):
@@ -153,3 +146,27 @@ class Bot(discord.Client):
     async def on_voice_state_update(self, before: discord.Member, after: discord.Member):
         await self.EventManager.dispatch_event(EventType.VOICE_STATE_UPDATED,
                                                VoiceStateUpdatedEventArgs(before, after))
+
+    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
+        await self.EventManager.dispatch_event(EventType.REACTION_ADDED,
+                                               ReactionAddedEventArgs(reaction, user))
+
+    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
+        await self.EventManager.dispatch_event(EventType.REACTION_REMOVED,
+                                               ReactionRemovedEventArgs(reaction, user))
+
+    async def on_reactions_clear(self, message: discord.Message, reactions: List[discord.Reaction]):
+        await self.EventManager.dispatch_event(EventType.REACTIONS_CLEARED,
+                                               ReactionsClearedEventArgs(message, reactions))
+
+    async def on_group_join(self, channel: discord.PrivateChannel, user: discord.User):
+        await self.EventManager.dispatch_event(EventType.MEMBER_JOINED_GROUP,
+                                               MemberJoinedGroupEventArgs(channel, user))
+
+    async def on_group_remove(self, channel: discord.PrivateChannel, user: discord.User):
+        await self.EventManager.dispatch_event(EventType.MEMBER_REMOVED_FROM_GROUP,
+                                               MemberRemovedFromGroupEventArgs(channel, user))
+
+    async def on_server_emojis_update(self, before: List[discord.Emoji], after: List[discord.Emoji]):
+        await self.EventManager.dispatch_event(EventType.SERVER_EMOJIS_UPDATED,
+                                               ServerEmojisUpdatedEventArgs(before, after))
