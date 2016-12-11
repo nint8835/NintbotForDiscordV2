@@ -125,6 +125,7 @@ class Plugin(BasePlugin):
         await self.bot.send_message(args.channel, embed=embed)
 
     async def set_game_command(self, args: CommandReceivedEventArgs):
+        # noinspection PyBroadException
         try:
             await self.bot.change_presence(game=Game(name=args.args[0]))
             await self.bot.send_message(args.channel, "My played game should now be set to \"{}\".".format(args.args[0]))

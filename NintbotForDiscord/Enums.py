@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class EventType(Enum):
+    """Enum containing the various types of events that can occur."""
     CLIENT_READY = "CLIENT_READY"
     CLIENT_RESUMED = "CLIENT_RESUMED"
 
@@ -48,6 +49,7 @@ class EventType(Enum):
 
 
 class RedisStorageScope(Enum):
+    """Enum containing the possible Redis storage scopes."""
     GLOBAL = "GLOBAL"
     PLUGIN = "PLUGIN"
     SERVER = "SERVER"
