@@ -1,6 +1,7 @@
 import os
 import traceback
 
+import discord
 from discord import Game
 from discord.utils import oauth_url
 
@@ -17,7 +18,7 @@ class Plugin(BasePlugin):
 
     PLUGIN_NAME = "Nintbot Core"
     PLUGIN_DESCRIPTION = "A collection of various core features"
-    PLUGIN_VERSION = "1.3"
+    PLUGIN_VERSION = "1.5"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -63,6 +64,16 @@ class Plugin(BasePlugin):
                                                  self,
                                                  Owner())
 
+        self.bot.CommandManager.register_command("^what plugins (?:are enabled|do you have)[?]?",
+                                                 self.plugins_command,
+                                                 self)
+
+        self.bot.CommandManager.register_command("^set your (?:currently )?(?:played )?game to \"?([^\\n\"]+)\"?$",
+                                                 self.set_game_command,
+                                                 self,
+                                                 Owner(),
+                                                 priority=1000)
+
     async def invite_command(self, args: CommandReceivedEventArgs):
         await self.bot.send_message(args.channel,
                                     "You can invite me to your server using the following link: {}".format(
@@ -70,10 +81,10 @@ class Plugin(BasePlugin):
                                     ))
 
     async def ready_event(self, args: EventArgs):
-        await self.bot.change_status(game=Game(name="Nintbot V2 Beta - nintbot.xyz"))
+        await self.bot.change_presence(game=Game(name="Nintbot V2 Beta"))
 
     async def fix_game_command(self, args: CommandReceivedEventArgs):
-        await self.bot.change_status(game=Game(name="Nintbot V2 Beta - nintbot.xyz"))
+        await self.bot.change_presence(game=Game(name="Nintbot V2 Beta"))
         await self.bot.send_message(args.channel,
                                     "My currently displayed game should now be reset back to default.")
 
@@ -95,11 +106,28 @@ class Plugin(BasePlugin):
 
     async def debug_command(self, args: CommandReceivedEventArgs):
         # noinspection PyBroadException
-        print("Command received")
         try:
             await self.bot.send_message(args.channel,
                                         "```py\n{}```".format(eval(args.args[0])))
         except:
             await self.bot.send_message(args.channel,
                                         "```py\n{}```".format(traceback.format_exc(3)))
+
+    async def plugins_command(self, args: CommandReceivedEventArgs):
+        embed = discord.Embed()
+        embed.colour = discord.Colour.blue()
+        for plugin in self.bot.PluginManager.plugins:
+            embed.add_field(name=plugin["instance"].PLUGIN_NAME, value="V{} by {}\n{}".format(
+                plugin["instance"].PLUGIN_VERSION,
+                plugin["instance"].PLUGIN_DEVELOPER,
+                plugin["instance"].PLUGIN_DESCRIPTION
+            ))
+        await self.bot.send_message(args.channel, embed=embed)
+
+    async def set_game_command(self, args: CommandReceivedEventArgs):
+        try:
+            await self.bot.change_presence(game=Game(name=args.args[0]))
+            await self.bot.send_message(args.channel, "My played game should now be set to \"{}\".".format(args.args[0]))
+        except:
+            traceback.print_exc(5)
 
