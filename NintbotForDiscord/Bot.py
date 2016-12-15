@@ -1,6 +1,7 @@
 import logging
 from typing import Tuple
 
+from .FeatureManager import FeatureManager
 from .CommandManager import CommandManager
 from .Enums import EventType
 from .EventArgs import *
@@ -31,6 +32,9 @@ class Bot(discord.Client):
 
         self.logger.debug("Creating CommandManager...")
         self.CommandManager = CommandManager(self.EventManager)
+
+        self.logger.debug("Creating FeatureManager...")
+        self.FeatureManager = FeatureManager(self)
 
         self.logger.debug("Creating PluginManager...")
         self.PluginManager = PluginManager(self)

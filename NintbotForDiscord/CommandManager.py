@@ -2,9 +2,7 @@ import logging
 import re
 from operator import itemgetter
 from typing import List
-
 import asyncio
-
 import discord
 
 from .Permissions.Base import Permission
@@ -20,7 +18,7 @@ class CommandManager(object):
         self.logger = logging.getLogger("CommandManager")
         self.commands = []  # type: List[dict]
 
-    def register_command(self, command_regex: "str", handler: asyncio.coroutine, plugin: BasePlugin,
+    def register_command(self, command_regex: str, handler: asyncio.coroutine, plugin: BasePlugin,
                          permission: Permission = Permission(), priority: int = 0):
         self.commands.append({
             "plugin": plugin,

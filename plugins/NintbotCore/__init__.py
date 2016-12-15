@@ -18,7 +18,7 @@ class Plugin(BasePlugin):
 
     PLUGIN_NAME = "Nintbot Core"
     PLUGIN_DESCRIPTION = "A collection of various core features"
-    PLUGIN_VERSION = "1.5"
+    PLUGIN_VERSION = "1.6"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -107,11 +107,11 @@ class Plugin(BasePlugin):
     async def debug_command(self, args: CommandReceivedEventArgs):
         # noinspection PyBroadException
         try:
-            await self.bot.send_message(args.channel,
-                                        "```py\n{}```".format(eval(args.args[0])))
+            results = eval(args.args[0])
         except:
-            await self.bot.send_message(args.channel,
-                                        "```py\n{}```".format(traceback.format_exc(3)))
+            results = traceback.format_exc(3)
+
+        await self.bot.send_message(args.channel, "```python\n{}```".format(results))
 
     async def plugins_command(self, args: CommandReceivedEventArgs):
         embed = discord.Embed()
