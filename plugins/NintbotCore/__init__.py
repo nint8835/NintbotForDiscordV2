@@ -18,7 +18,7 @@ class Plugin(BasePlugin):
 
     PLUGIN_NAME = "Nintbot Core"
     PLUGIN_DESCRIPTION = "A collection of various core features"
-    PLUGIN_VERSION = "1.6"
+    PLUGIN_VERSION = "1.7"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -93,16 +93,24 @@ class Plugin(BasePlugin):
                                     "I am currently in {} servers.".format(len(self.bot.servers)))
 
     async def enable_feature_command(self, args: CommandReceivedEventArgs):
-        storage = self.bot.RedisManager.get_storage(args.channel.server)
-        await storage.set("FEATURE:{}".format(args.args[0]), str(True))
-        await self.bot.send_message(args.channel,
-                                    "The feature \"{}\" was enabled for this server.".format(args.args[0]))
+        try:
+            feature = self.bot.FeatureManager.get_feature(args.args[0])
+            await feature.enable_feature(args.channel.server)
+            await self.bot.send_message(args.channel,
+                                        "The feature \"{}\" was enabled for this server.".format(args.args[0]))
+        except KeyError:
+            await self.bot.send_message(args.channel,
+                                        "That feature doesn't exist.")
 
     async def disable_feature_command(self, args: CommandReceivedEventArgs):
-        storage = self.bot.RedisManager.get_storage(args.channel.server)
-        await storage.set("FEATURE:{}".format(args.args[0]), str(False))
-        await self.bot.send_message(args.channel,
-                                    "The feature \"{}\" was disabled for this server.".format(args.args[0]))
+        try:
+            feature = self.bot.FeatureManager.get_feature(args.args[0])
+            await feature.disable_feature(args.channel.server)
+            await self.bot.send_message(args.channel,
+                                        "The feature \"{}\" was disabled for this server.".format(args.args[0]))
+        except KeyError:
+            await self.bot.send_message(args.channel,
+                                        "That feature doesn't exist.")
 
     async def debug_command(self, args: CommandReceivedEventArgs):
         # noinspection PyBroadException
