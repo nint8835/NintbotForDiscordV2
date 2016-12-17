@@ -17,7 +17,7 @@ from NintbotForDiscord.Permissions.Special import Owner
 class Plugin(BasePlugin):
     PLUGIN_NAME = "Nintbot Core"
     PLUGIN_DESCRIPTION = "A collection of various core features"
-    PLUGIN_VERSION = "1.8"
+    PLUGIN_VERSION = "1.8.1"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -63,7 +63,7 @@ class Plugin(BasePlugin):
                                                  self,
                                                  Owner())
 
-        self.bot.CommandManager.register_command("^what plugins (?:are enabled|do you have)[?]?",
+        self.bot.CommandManager.register_command("^what plugins (?:are enabled|do you have|installed|available)[?]?",
                                                  self.plugins_command,
                                                  self)
 
