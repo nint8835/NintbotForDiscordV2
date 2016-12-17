@@ -15,10 +15,9 @@ from NintbotForDiscord.Permissions.Special import Owner
 
 
 class Plugin(BasePlugin):
-
     PLUGIN_NAME = "Nintbot Core"
     PLUGIN_DESCRIPTION = "A collection of various core features"
-    PLUGIN_VERSION = "1.7"
+    PLUGIN_VERSION = "1.8"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -67,6 +66,12 @@ class Plugin(BasePlugin):
         self.bot.CommandManager.register_command("^what plugins (?:are enabled|do you have)[?]?",
                                                  self.plugins_command,
                                                  self)
+
+        self.bot.CommandManager.register_command(
+            "^what features (?:are|do) (?:registered|available|you have|there)[?]?",
+            self.features_command,
+            self
+        )
 
         self.bot.CommandManager.register_command("^set your (?:currently )?(?:played )?game to \"?([^\\n\"]+)\"?$",
                                                  self.set_game_command,
@@ -132,11 +137,22 @@ class Plugin(BasePlugin):
             ))
         await self.bot.send_message(args.channel, embed=embed)
 
+    async def features_command(self, args: CommandReceivedEventArgs):
+        embed = discord.Embed()
+        embed.colour = discord.Colour.blue()
+        for feature in self.bot.FeatureManager.features:
+            feature_inst = self.bot.FeatureManager.get_feature(feature)
+            embed.add_field(name=feature.capitalize(), value="From {}\n{}".format(
+                feature_inst.owner.PLUGIN_NAME,
+                feature_inst.description
+            ))
+        await self.bot.send_message(args.channel, embed=embed)
+
     async def set_game_command(self, args: CommandReceivedEventArgs):
         # noinspection PyBroadException
         try:
             await self.bot.change_presence(game=Game(name=args.args[0]))
-            await self.bot.send_message(args.channel, "My played game should now be set to \"{}\".".format(args.args[0]))
+            await self.bot.send_message(args.channel,
+                                        "My played game should now be set to \"{}\".".format(args.args[0]))
         except:
             traceback.print_exc(5)
-
