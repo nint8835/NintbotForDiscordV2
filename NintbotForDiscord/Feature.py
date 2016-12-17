@@ -6,10 +6,11 @@ from .BasePlugin import BasePlugin
 
 class Feature(object):
 
-    def __init__(self, owner: BasePlugin, name: str, bot: "Bot.Bot"):
+    def __init__(self, owner: BasePlugin, name: str, bot: "Bot.Bot", description: str):
         self.bot = bot
         self.owner = owner
         self.name = name
+        self.description = description
 
     async def feature_enabled(self, server: discord.Server):
         storage = self.bot.RedisManager.get_storage(server)

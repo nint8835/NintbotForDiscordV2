@@ -11,7 +11,7 @@ from NintbotForDiscord.EventArgs import CommandReceivedEventArgs
 class Plugin(BasePlugin):
     PLUGIN_NAME = "Fanfiction"
     PLUGIN_DESCRIPTION = "Generates fanfiction based on users in the server"
-    PLUGIN_VERSION = "1.1.1"
+    PLUGIN_VERSION = "1.1.2"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -23,7 +23,7 @@ class Plugin(BasePlugin):
                                                  self.generate_fanfiction,
                                                  self)
 
-        self.feature = self.bot.FeatureManager.register_feature(self, "fanfiction")
+        self.feature = self.bot.FeatureManager.register_feature(self, "fanfiction", "Allows generation of fanfictions.")
 
     async def generate_fanfiction(self, args: CommandReceivedEventArgs):
         if await self.feature.feature_enabled(args.channel.server):

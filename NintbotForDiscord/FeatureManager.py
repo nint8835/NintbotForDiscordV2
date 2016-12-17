@@ -9,10 +9,10 @@ class FeatureManager(object):
         self.bot = bot
         self.features = {}
 
-    def register_feature(self, owner: BasePlugin, name: str):
+    def register_feature(self, owner: BasePlugin, name: str, description: str = "A feature."):
         if name in self.features:
             return self.features[name]
-        feature = Feature(owner, name, self.bot)
+        feature = Feature(owner, name, self.bot, description)
         self.features[name] = feature
         return feature
 
