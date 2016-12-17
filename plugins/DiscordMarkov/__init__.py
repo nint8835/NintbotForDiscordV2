@@ -12,10 +12,9 @@ from NintbotForDiscord.EventArgs import MessageReceivedEventArgs, CommandReceive
 
 
 class Plugin(BasePlugin):
-
     PLUGIN_NAME = "Discord Markov"
     PLUGIN_DESCRIPTION = "A plugin for generating messages based on previous messages using markov chains."
-    PLUGIN_VERSION = "1.0"
+    PLUGIN_VERSION = "1.1.1"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -35,6 +34,11 @@ class Plugin(BasePlugin):
             self
         )
 
+        self.feature = self.bot.FeatureManager.register_feature(
+            self,
+            "markov",
+            "Enables the use of the message generation capabilities of the bot."
+        )
         self.bot.EventManager.loop.create_task(self.save_and_regen())
 
     async def save_and_regen(self):
@@ -61,9 +65,11 @@ class Plugin(BasePlugin):
             self.data.append(args.content)
 
     async def wisdom_command(self, args: CommandReceivedEventArgs):
-        if args.args[0] != "":
-            await self.bot.send_message(args.channel, self.chain.make_sentence_with_start(args.args[0]))
+        if await self.feature.feature_enabled(args.channel.server):
+            if args.args[0] != "":
+                await self.bot.send_message(args.channel, self.chain.make_sentence_with_start(args.args[0]))
+            else:
+                await self.bot.send_message(args.channel, self.chain.make_sentence())
         else:
-            await self.bot.send_message(args.channel, self.chain.make_sentence())
-
-
+            await self.bot.send_message(args.channel,
+                                        "This feature is not enabled.")
