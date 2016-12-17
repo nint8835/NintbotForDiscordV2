@@ -150,3 +150,4 @@ fabric.properties
 /Start.py
 /plugins/Fanfiction/fanfiction.json
 /plugins/Fanfiction/GenerateString.py
+/plugins/DiscordMarkov/data.json
