@@ -15,7 +15,7 @@ from NintbotForDiscord.Permissions.Special import Owner
 class Plugin(BasePlugin):
     PLUGIN_NAME = "Discord Markov"
     PLUGIN_DESCRIPTION = "A plugin for generating messages based on previous messages using markov chains."
-    PLUGIN_VERSION = "1.4"
+    PLUGIN_VERSION = "1.5"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -28,11 +28,18 @@ class Plugin(BasePlugin):
 
         self.make_chain()
 
+        self.feature = self.bot.FeatureManager.register_feature(
+            self,
+            "markov",
+            "Enables the use of the message generation capabilities of the bot."
+        )
+
         self.bot.EventManager.register_handler(EventType.MESSAGE_RECEIVED, self.on_message, self)
         self.bot.CommandManager.register_command(
             "^(?:generate|make up|make me up)(?: me)?(?: some)? (?:nonsense|wisdom)(?: based on | about )?\"?([\w]+)?\"?\.?$",
             self.wisdom_command,
-            self
+            self,
+            feature=self.feature
         )
 
         self.bot.CommandManager.register_command("^force a save$",
@@ -40,11 +47,6 @@ class Plugin(BasePlugin):
                                                  self,
                                                  Owner())
 
-        self.feature = self.bot.FeatureManager.register_feature(
-            self,
-            "markov",
-            "Enables the use of the message generation capabilities of the bot."
-        )
         self.bot.EventManager.loop.create_task(self.save_and_regen())
 
     async def save_and_regen(self):
@@ -70,29 +72,28 @@ class Plugin(BasePlugin):
         if args.content != "":
             self.data.append(args.content)
 
-    def generate_message(self, start: str = ""):
+    def generate_message(self, start: str=""):
         message = ""
         count = 0
-        while message == "" and count <= 5:
-            if start != "":
-                message = self.chain.make_sentence_with_start(start)
-                count += 1
-            else:
-                message = self.chain.make_sentence()
-                count += 1
+        try:
+            while message == "" and count < 5:
+                if start != "":
+                    message = self.chain.make_sentence_with_start(start)
+                    count += 1
+                else:
+                    message = self.chain.make_sentence()
+                    count += 1
+        except KeyError:
+            message = ""
         if message == "":
             message = "I don't know how to respond."
         return message
 
     async def wisdom_command(self, args: CommandReceivedEventArgs):
-        if await self.feature.feature_enabled(args.channel):
-            if args.args[0] != "":
-                await self.bot.send_message(args.channel, self.chain.make_sentence_with_start(args.args[0]))
-            else:
-                await self.bot.send_message(args.channel, self.chain.make_sentence())
+        if args.args[0] != "":
+            await self.bot.send_message(args.channel, self.generate_message(args.args[0]))
         else:
-            await self.bot.send_message(args.channel,
-                                        "This feature is not enabled.")
+            await self.bot.send_message(args.channel, self.generate_message())
 
     async def save_command(self, args: CommandReceivedEventArgs):
         with open(os.path.join(self.plugin_folder, "data.json"), "w") as f:

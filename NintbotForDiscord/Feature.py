@@ -11,7 +11,7 @@ class Feature(object):
         self.name = name
         self.description = description
 
-    async def feature_enabled(self, channel: discord.Channel=None, server: discord.Server=None):
+    async def feature_enabled(self, channel: discord.Channel=None, server: discord.Server=None) -> bool:
         if channel is not None:
             if channel.is_private:
                 return True
@@ -34,3 +34,11 @@ class Feature(object):
     async def disable_feature(self, server: discord.Server):
         storage = self.bot.RedisManager.get_storage(server)
         await storage.set("FEATURE:{}".format(self.name), str(False))
+
+
+class DummyFeature(Feature):
+    def __init__(self, owner: BasePlugin=None, name: str=None, bot: "Bot.Bot"=None, description: str=None):
+        super().__init__(owner, name, bot, description)
+
+    async def feature_enabled(self, channel: discord.Channel=None, server: discord.Server=None):
+        return True
