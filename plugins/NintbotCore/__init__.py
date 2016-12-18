@@ -17,7 +17,7 @@ from NintbotForDiscord.Permissions.Special import Owner
 class Plugin(BasePlugin):
     PLUGIN_NAME = "Nintbot Core"
     PLUGIN_DESCRIPTION = "A collection of various core features"
-    PLUGIN_VERSION = "1.8.1"
+    PLUGIN_VERSION = "1.9"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -142,8 +142,14 @@ class Plugin(BasePlugin):
         embed.colour = discord.Colour.blue()
         for feature in self.bot.FeatureManager.features:
             feature_inst = self.bot.FeatureManager.get_feature(feature)
-            embed.add_field(name=feature.capitalize(), value="From {}\n{}".format(
+            enabled = await feature_inst.feature_enabled(args.channel)
+            if enabled:
+                status = "Enabled"
+            else:
+                status = "Disabled"
+            embed.add_field(name=feature.capitalize(), value="From {}\nStatus: {}\n{}".format(
                 feature_inst.owner.PLUGIN_NAME,
+                status,
                 feature_inst.description
             ))
         await self.bot.send_message(args.channel, embed=embed)
