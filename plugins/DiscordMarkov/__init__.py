@@ -75,6 +75,7 @@ class Plugin(BasePlugin):
     def generate_message(self, start: str=""):
         message = ""
         count = 0
+        # noinspection PyBroadException
         try:
             while message == "" and count < 5:
                 if start != "":
@@ -83,8 +84,8 @@ class Plugin(BasePlugin):
                 else:
                     message = self.chain.make_sentence()
                     count += 1
-        except KeyError:
-            message = ""
+        except:
+            message = "I don't know how to respond."
         if message == "":
             message = "I don't know how to respond."
         return message

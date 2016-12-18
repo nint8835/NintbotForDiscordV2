@@ -13,6 +13,13 @@ from .Redis import RedisManager
 class Bot(discord.Client):
 
     def __init__(self, token: str, client_id: str, redis_addr: Tuple[str, int], log_level=logging.INFO):
+        """
+        Initialize a Bot instance.
+        :param token: Your Discord login token
+        :param client_id: Your application client id
+        :param redis_addr: The address of the Redis server to connect to
+        :param log_level: The log level
+        """
         super(Bot, self).__init__()
 
         logging.basicConfig(format="{%(asctime)s} (%(name)s) [%(levelname)s]: %(message)s",
@@ -47,6 +54,9 @@ class Bot(discord.Client):
         logging.getLogger("websockets").setLevel(logging.ERROR)
 
     def start_bot(self):
+        """
+        Start the bot
+        """
         self.logger.info("Starting bot...")
         self.run(self._client_token)
 
