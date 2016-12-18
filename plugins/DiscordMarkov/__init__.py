@@ -15,7 +15,7 @@ from NintbotForDiscord.Permissions.Special import Owner
 class Plugin(BasePlugin):
     PLUGIN_NAME = "Discord Markov"
     PLUGIN_DESCRIPTION = "A plugin for generating messages based on previous messages using markov chains."
-    PLUGIN_VERSION = "1.2"
+    PLUGIN_VERSION = "1.3"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -71,7 +71,7 @@ class Plugin(BasePlugin):
             self.data.append(args.content)
 
     async def wisdom_command(self, args: CommandReceivedEventArgs):
-        if await self.feature.feature_enabled(args.channel.server):
+        if await self.feature.feature_enabled(args.channel):
             if args.args[0] != "":
                 await self.bot.send_message(args.channel, self.chain.make_sentence_with_start(args.args[0]))
             else:
