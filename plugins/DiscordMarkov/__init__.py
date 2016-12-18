@@ -9,12 +9,13 @@ from NintbotForDiscord import Bot
 from NintbotForDiscord.BasePlugin import BasePlugin
 from NintbotForDiscord.Enums import EventType
 from NintbotForDiscord.EventArgs import MessageReceivedEventArgs, CommandReceivedEventArgs
+from NintbotForDiscord.Permissions.Special import Owner
 
 
 class Plugin(BasePlugin):
     PLUGIN_NAME = "Discord Markov"
     PLUGIN_DESCRIPTION = "A plugin for generating messages based on previous messages using markov chains."
-    PLUGIN_VERSION = "1.1.1"
+    PLUGIN_VERSION = "1.2"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -29,10 +30,15 @@ class Plugin(BasePlugin):
 
         self.bot.EventManager.register_handler(EventType.MESSAGE_RECEIVED, self.on_message, self)
         self.bot.CommandManager.register_command(
-            "(?:generate|make up|make me up)(?: me)?(?: some)? (?:nonsense|wisdom)(?: based on )?\"?([\w]+)?\"?\.?$",
+            "^(?:generate|make up|make me up)(?: me)?(?: some)? (?:nonsense|wisdom)(?: based on | about )?\"?([\w]+)?\"?\.?$",
             self.wisdom_command,
             self
         )
+
+        self.bot.CommandManager.register_command("^force a save$",
+                                                 self.save_command,
+                                                 self,
+                                                 Owner())
 
         self.feature = self.bot.FeatureManager.register_feature(
             self,
@@ -73,3 +79,8 @@ class Plugin(BasePlugin):
         else:
             await self.bot.send_message(args.channel,
                                         "This feature is not enabled.")
+
+    async def save_command(self, args: CommandReceivedEventArgs):
+        with open(os.path.join(self.plugin_folder, "data.json"), "w") as f:
+            json.dump(self.data, f)
+        await self.bot.send_message(args.channel, "Data saved.")
