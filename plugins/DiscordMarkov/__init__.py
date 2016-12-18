@@ -15,7 +15,7 @@ from NintbotForDiscord.Permissions.Special import Owner
 class Plugin(BasePlugin):
     PLUGIN_NAME = "Discord Markov"
     PLUGIN_DESCRIPTION = "A plugin for generating messages based on previous messages using markov chains."
-    PLUGIN_VERSION = "1.5"
+    PLUGIN_VERSION = "1.5.1"
     PLUGIN_DEVELOPER = "nint8835"
 
     def __init__(self, bot: "Bot.Bot", folder: os.path):
@@ -36,7 +36,7 @@ class Plugin(BasePlugin):
 
         self.bot.EventManager.register_handler(EventType.MESSAGE_RECEIVED, self.on_message, self)
         self.bot.CommandManager.register_command(
-            "^(?:generate|make up|make me up)(?: me)?(?: some)? (?:nonsense|wisdom)(?: based on | about )?\"?([\w]+)?\"?\.?$",
+            "^(?:generate|make up|make me up|tell)(?: me)?(?: some)? (?:nonsense|wisdom)(?: based on | about )?\"?([\w]+)?\"?\.?$",
             self.wisdom_command,
             self,
             feature=self.feature

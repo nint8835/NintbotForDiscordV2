@@ -49,7 +49,7 @@ class PluginManager(object):
         Loads all plugins from the plugins directory
         """
         self.plugins = []
-        for folder in [os.path.join("plugins", i) for i in os.listdir(os.path.join("plugins"))\
+        for folder in [os.path.join("plugins", i) for i in os.listdir(os.path.join("plugins"))
                        if os.path.isdir(os.path.join("plugins", i))]:
             if os.path.isfile(os.path.join(folder, "plugin.json")):
                 with open(os.path.join(folder, "plugin.json")) as f:
