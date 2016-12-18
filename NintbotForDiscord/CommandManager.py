@@ -40,7 +40,7 @@ class CommandManager(object):
 
     async def process_command(self, message: discord.Message):
         if message.content.startswith("Nintbot, "):
-            command = message.content.lstrip("Nintbot,").lstrip(" ")
+            command = message.content[9:].lstrip(" ")
             for registered_command in sorted(self.commands, key=itemgetter("priority"), reverse=True):
                 if registered_command["regex"].match(command) and await registered_command["feature"].feature_enabled(
                         message.channel):

@@ -208,7 +208,7 @@ class CommandReceivedEventArgs(MessageReceivedEventArgs):
 
     def __init__(self, message: discord.Message, command_info: dict):
         super(CommandReceivedEventArgs, self).__init__(message)
-        self.args = command_info["regex"].findall(self.content.lstrip("Nintbot, "))[0]
+        self.args = command_info["regex"].findall(self.content[9:])[0]
         if not isinstance(self.args, tuple):
             self.args = (self.args, )
 

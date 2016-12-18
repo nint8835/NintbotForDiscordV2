@@ -36,7 +36,7 @@ class Plugin(BasePlugin):
 
         self.bot.EventManager.register_handler(EventType.MESSAGE_RECEIVED, self.on_message, self)
         self.bot.CommandManager.register_command(
-            "^(?:generate|make up|make me up|tell)(?: me)?(?: some)? (?:nonsense|wisdom)(?: based on | about )?\"?([\w]+)?\"?\.?$",
+            "^(?:generate|make up|make me up|tell)(?: me)?(?: some)? (?:nonsense|wisdom)(?: based on | about )?\"?([\\w]+)?\"?\\.?$",
             self.wisdom_command,
             self,
             feature=self.feature
